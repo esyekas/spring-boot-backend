@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 public class User {
-    @org.springframework.data.annotation.Id
+    @Id
     private String id;
 
     private String firstName;

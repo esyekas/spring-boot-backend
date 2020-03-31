@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +38,7 @@ public class UserController {
                 .map(user -> new EntityModel<>(user,
                         linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel(),
                         linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
-                .map(ResponseEntity::ok) //
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -47,14 +46,14 @@ public class UserController {
     public ResponseEntity<CollectionModel<EntityModel<User>>> getUsers() {
         List<User> users = repository.findAll();
 
-        List<EntityModel<User>> employees = StreamSupport.stream(repository.findAll().spliterator(), false)
+        List<EntityModel<User>> userEntities = StreamSupport.stream(repository.findAll().spliterator(), false)
                 .map(user -> new EntityModel<>(user,
                         linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel(),
-                        linkTo(methodOn(UserController.class).getUsers()).withRel("users"))) //
+                        linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok( //
-                new CollectionModel<>(employees, //
+        return ResponseEntity.ok(
+                new CollectionModel<>(userEntities,
                         linkTo(methodOn(UserController.class).getUsers()).withSelfRel()));
     }
 
