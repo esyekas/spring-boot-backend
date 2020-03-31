@@ -1,6 +1,8 @@
 package com.example.helpgiver;
 
+import com.example.helpgiver.mongo.HelpRequestRepository;
 import com.example.helpgiver.mongo.UserRepository;
+import com.example.helpgiver.objects.HelpRequest;
 import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -12,7 +14,10 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 public class HelpGiverApplication implements CommandLineRunner {
 
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private HelpRequestRepository helpRequestRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(HelpGiverApplication.class, args);
@@ -21,7 +26,7 @@ public class HelpGiverApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Fresh start
-        repository.deleteAll();
+        userRepository.deleteAll();
 
         // Adding test user
         User user1 = new User();
@@ -34,6 +39,12 @@ public class HelpGiverApplication implements CommandLineRunner {
         user1.setRiskGroup("Helper");
         user1.setPhoneNumber("+4677777777");
         user1.setAddressCoordinates(new GeoJsonPoint(59.3293, 18.0686));
-        repository.save(user1);
+        userRepository.save(user1);
+
+        // Adding test help request
+        HelpRequest request = new HelpRequest();
+        request.setRequester(user1);
+        request.setTitle("zzz");
+        helpRequestRepository.save(request);
     }
 }

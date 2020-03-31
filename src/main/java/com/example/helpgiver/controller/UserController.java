@@ -24,8 +24,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserController {
 
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
 
+    // TODO move up a level to cover all controllers
     @GetMapping
     public ResponseEntity<CollectionModel<Object>> getRoot() {
         return ResponseEntity.ok(new CollectionModel<>(Collections.emptySet(),
@@ -34,7 +35,7 @@ public class UserController {
 
     @GetMapping("/user/{id}")
     ResponseEntity<EntityModel<User>> getUserById(@PathVariable String id) {
-        return repository.findById(id)
+        return userRepository.findById(id)
                 .map(user -> new EntityModel<>(user,
                         linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel(),
                         linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
@@ -44,9 +45,7 @@ public class UserController {
 
     @GetMapping("users")
     public ResponseEntity<CollectionModel<EntityModel<User>>> getUsers() {
-        List<User> users = repository.findAll();
-
-        List<EntityModel<User>> userEntities = StreamSupport.stream(repository.findAll().spliterator(), false)
+        List<EntityModel<User>> userEntities = StreamSupport.stream(userRepository.findAll().spliterator(), false)
                 .map(user -> new EntityModel<>(user,
                         linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel(),
                         linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
@@ -56,5 +55,4 @@ public class UserController {
                 new CollectionModel<>(userEntities,
                         linkTo(methodOn(UserController.class).getUsers()).withSelfRel()));
     }
-
 }
