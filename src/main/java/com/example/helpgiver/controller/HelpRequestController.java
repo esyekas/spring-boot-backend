@@ -21,6 +21,8 @@ public class HelpRequestController {
     @Autowired
     private HelpRequestRepository helpRequestRepository;
 
+    // TODO help requests should link to users
+
     @GetMapping("helpRequests")
     public ResponseEntity<CollectionModel<EntityModel<HelpRequest>>> getHelpRequests() {
         List<EntityModel<HelpRequest>> helpRequestEntities = StreamSupport.stream(helpRequestRepository.findAll().spliterator(), false)

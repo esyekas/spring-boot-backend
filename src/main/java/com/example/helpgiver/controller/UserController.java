@@ -26,13 +26,6 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // TODO move up a level to cover all controllers
-    @GetMapping
-    public ResponseEntity<CollectionModel<Object>> getRoot() {
-        return ResponseEntity.ok(new CollectionModel<>(Collections.emptySet(),
-                linkTo(methodOn(UserController.class).getUsers()).withRel("users")));
-    }
-
     @GetMapping("/user/{id}")
     ResponseEntity<EntityModel<User>> getUserById(@PathVariable String id) {
         return userRepository.findById(id)
