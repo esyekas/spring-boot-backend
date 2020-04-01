@@ -3,8 +3,12 @@ package com.example.helpgiver.mongo;
 import com.example.helpgiver.objects.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface UserRepository extends MongoRepository<User, String> {
-    User findByEmail(String email);
+import java.util.Optional;
 
-    User findByRiskGroup(String riskGroup);
+public interface UserRepository extends MongoRepository<User, String> {
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByPhoneNumber(String phoneNumber);
+
+    Optional<User> findByRiskGroup(String riskGroup);
 }

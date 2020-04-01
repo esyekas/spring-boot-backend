@@ -2,6 +2,8 @@ package com.example.helpgiver.objects;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 public class User {
     @Id
@@ -11,10 +13,14 @@ public class User {
     private String lastName;
     private String publicName;
 
+    @Indexed(unique=true)
     private String phoneNumber;
+    @Indexed(unique=true)
     private String email;
+
     private String addressText;
 
+    @GeoSpatialIndexed
     private GeoJsonPoint addressCoordinates;
 
     private String riskGroup;

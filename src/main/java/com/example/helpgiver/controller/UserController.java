@@ -5,14 +5,18 @@ import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -47,5 +51,29 @@ public class UserController {
         return ResponseEntity.ok(
                 new CollectionModel<>(userEntities,
                         linkTo(methodOn(UserController.class).getUsers()).withSelfRel()));
+    }
+
+    @GetMapping("/user")
+    ResponseEntity<EntityModel<User>> getUserByByEmailOrPhone(@RequestParam Optional<String> email, @RequestParam Optional<String> phoneNumber) {
+        // To prevent not matching emails and phones
+        if (email.isPresent() && phoneNumber.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "You need to provide either email or phone number but not both");
+        }
+
+        Optional<User> user = Optional.empty();
+
+        if (email.isPresent()) {
+            user = userRepository.findByEmail(email.get());
+        } else if (phoneNumber.isPresent()) {
+            user = userRepository.findByPhoneNumber(phoneNumber.get());
+        }
+
+        return user
+                .map(u -> new EntityModel<>(u,
+                        linkTo(methodOn(UserController.class).getUserById(u.getId())).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
