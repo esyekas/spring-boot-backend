@@ -3,8 +3,6 @@ package com.example.helpgiver.objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
-import java.util.Collection;
-
 public class HelpRequest {
     @Id
     private String id;
@@ -14,7 +12,7 @@ public class HelpRequest {
     private String address;
     private GeoJsonPoint addressCoordinates;
 
-    private Collection<User> helper;
+    private User helper;
 
     private String category; // TODO enum or from db?
     private String description;
@@ -60,11 +58,11 @@ public class HelpRequest {
         this.addressCoordinates = addressCoordinates;
     }
 
-    public Collection<User> getHelper() {
+    public User getHelper() {
         return helper;
     }
 
-    public void setHelper(Collection<User> helper) {
+    public void setHelper(User helper) {
         this.helper = helper;
     }
 
