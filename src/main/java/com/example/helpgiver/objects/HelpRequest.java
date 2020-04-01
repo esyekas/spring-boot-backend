@@ -1,18 +1,29 @@
 package com.example.helpgiver.objects;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
 public class HelpRequest {
     @Id
     private String id;
 
     private String title;
-    private User requester;
-    private String address;
-    private GeoJsonPoint addressCoordinates;
 
+    @Reference
+    private User requester;
+
+    @Reference
     private User helper;
+
+    private String address;
+
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, name = "address_coordinates_index")
+    private GeoJsonPoint addressCoordinates;
 
     private String category; // TODO enum or from db?
     private String description;

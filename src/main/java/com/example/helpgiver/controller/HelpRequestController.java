@@ -5,6 +5,10 @@ import com.example.helpgiver.mongo.UserRepository;
 import com.example.helpgiver.objects.HelpRequest;
 import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -18,9 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,6 +70,20 @@ public class HelpRequestController {
                         linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("nearbyHelpRequests")
+    public ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
+        List<GeoResult<HelpRequest>> helpRequests = helpRequestRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distanceKm, Metrics.KILOMETERS)).getContent();
+
+        List<EntityModel<GeoResult<HelpRequest>>> helpRequestEntities = StreamSupport.stream(helpRequests.spliterator(), false)
+                .map(helpRequest -> new EntityModel<>(helpRequest,
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequest(helpRequest.getContent().getId())).withSelfRel()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                new CollectionModel<>(helpRequestEntities,
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequestsGeo(x, y, distanceKm)).withSelfRel()));
     }
 
     @PostMapping("helpRequest")
