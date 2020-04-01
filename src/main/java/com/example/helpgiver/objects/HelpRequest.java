@@ -2,9 +2,13 @@ package com.example.helpgiver.objects;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collection;
 
+@Document
 public class HelpRequest {
     @Id
     private String id;
@@ -12,6 +16,8 @@ public class HelpRequest {
     private String title;
     private User requester;
     private String address;
+
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, name = "address_coordinates_index")
     private GeoJsonPoint addressCoordinates;
 
     private Collection<User> helper;

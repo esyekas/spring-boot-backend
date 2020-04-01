@@ -2,9 +2,12 @@ package com.example.helpgiver.objects;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
 public class User {
     @Id
     private String id;
@@ -13,14 +16,14 @@ public class User {
     private String lastName;
     private String publicName;
 
-    @Indexed(unique=true)
+    @Indexed(unique = true, name = "phone_number_index")
     private String phoneNumber;
-    @Indexed(unique=true)
+    @Indexed(unique = true, name = "email_index")
     private String email;
 
     private String addressText;
 
-    @GeoSpatialIndexed
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, name = "address_coordinates_index")
     private GeoJsonPoint addressCoordinates;
 
     private String riskGroup;
