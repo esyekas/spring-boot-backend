@@ -8,6 +8,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,5 +46,14 @@ public class HelpRequestController {
                         linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("helpRequest")
+    public ResponseEntity<EntityModel<HelpRequest>> createHelpRequest(@RequestParam HelpRequest helpRequest) {
+        HelpRequest savedHelpRequest = helpRequestRepository.save(helpRequest);
+
+        return ResponseEntity.ok(new EntityModel<>(savedHelpRequest,
+                linkTo(methodOn(HelpRequestController.class).getHelpRequest(savedHelpRequest.getId())).withSelfRel(),
+                linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
     }
 }
