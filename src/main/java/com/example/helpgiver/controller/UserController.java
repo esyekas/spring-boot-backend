@@ -56,7 +56,7 @@ public class UserController {
                     HttpStatus.BAD_REQUEST, "You need to provide either email or phone number");
         }
 
-        Optional<User> user = null;
+        Optional<User> user = Optional.empty();
 
         if (email.isPresent()) {
             user = userRepository.findByEmail(email.get());
