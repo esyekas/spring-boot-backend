@@ -1,6 +1,7 @@
 package com.example.helpgiver.objects;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.Collection;
 
@@ -11,6 +12,7 @@ public class HelpRequest {
     private String title;
     private User requester;
     private String address;
+    private GeoJsonPoint addressCoordinates;
 
     private Collection<User> helper;
 
@@ -48,6 +50,14 @@ public class HelpRequest {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public GeoJsonPoint getAddressCoordinates() {
+        return addressCoordinates;
+    }
+
+    public void setAddressCoordinates(GeoJsonPoint addressCoordinates) {
+        this.addressCoordinates = addressCoordinates;
     }
 
     public Collection<User> getHelper() {

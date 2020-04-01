@@ -61,6 +61,7 @@ public class HelpGiverApplication implements CommandLineRunner {
         request.setRequester(user1);
         request.setTitle("zzz");
         request.setAddress("Somewhere");
+        request.setAddressCoordinates(new GeoJsonPoint(59.2109, 18.0134));
         request.setHelper(Arrays.asList(user2));
         helpRequestRepository.save(request);
     }
