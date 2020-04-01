@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,7 +70,7 @@ public class UserController {
 
         return user
                 .map(u -> new EntityModel<>(u,
-                        linkTo(methodOn(UserController.class).getUserById(u.getId())).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getUserByByEmailOrPhone(email, phoneNumber)).withSelfRel(),
                         linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
