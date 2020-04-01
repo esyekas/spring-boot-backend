@@ -13,8 +13,12 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +42,7 @@ public class UserController {
     private UserRepository userRepository;
 
     @GetMapping("/user/{id}")
-    ResponseEntity<EntityModel<User>> getUserById(@PathVariable String id) {
+    public ResponseEntity<EntityModel<User>> getUserById(@PathVariable String id) {
         return userRepository.findById(id)
                 .map(user -> new EntityModel<>(user,
                         linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel(),
@@ -60,8 +64,8 @@ public class UserController {
                         linkTo(methodOn(UserController.class).getUsers()).withSelfRel()));
     }
 
-    @GetMapping("/user")
-    ResponseEntity<EntityModel<User>> getUserByByEmailOrPhone(@RequestParam Optional<String> email, @RequestParam Optional<String> phoneNumber) {
+    @GetMapping("user")
+    public ResponseEntity<EntityModel<User>> getUserByByEmailOrPhone(@RequestParam Optional<String> email, @RequestParam Optional<String> phoneNumber) {
         // To prevent not matching emails and phones
         if (email.isPresent() && phoneNumber.isPresent()) {
             throw new ResponseStatusException(
@@ -78,10 +82,36 @@ public class UserController {
 
         return user
                 .map(u -> new EntityModel<>(u,
-                        linkTo(methodOn(UserController.class).getUserById(u.getId())).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getUserByByEmailOrPhone(email, phoneNumber)).withSelfRel(),
                         linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("user")
+    public ResponseEntity<EntityModel<User>> addUser(@RequestBody User user) {
+        User savedUser = userRepository.save(user);
+
+        return ResponseEntity.ok(new EntityModel<>(savedUser,
+                linkTo(methodOn(UserController.class).getUserById(savedUser.getId())).withSelfRel(),
+                linkTo(methodOn(UserController.class).getUsers()).withRel("users")));
+    }
+
+    @PutMapping("user")
+    public ResponseEntity<EntityModel<User>> updateUser(@RequestBody User user) {
+        User savedUser = userRepository.save(user);
+
+        return ResponseEntity.ok(new EntityModel<>(savedUser,
+                linkTo(methodOn(UserController.class).getUserById(savedUser.getId())).withSelfRel(),
+                linkTo(methodOn(UserController.class).getUsers()).withRel("users")));
+    }
+
+    @DeleteMapping("user/{id}")
+    public ResponseEntity<CollectionModel<Object>> deleteUser(@PathVariable String id) {
+        userRepository.deleteById(id);
+
+        return ResponseEntity.ok(new CollectionModel<>(Collections.emptySet(),
+                linkTo(methodOn(UserController.class).getUsers()).withRel("helpRequests")));
     }
 
     @GetMapping(value = "/geoUsers")

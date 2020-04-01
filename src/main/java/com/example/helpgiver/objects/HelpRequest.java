@@ -24,7 +24,7 @@ public class HelpRequest {
     private GeoJsonPoint addressCoordinates;
 
     @Reference
-    private Collection<User> helper;
+    private User helper;
 
     private String category; // TODO enum or from db?
     private String description;
@@ -70,11 +70,11 @@ public class HelpRequest {
         this.addressCoordinates = addressCoordinates;
     }
 
-    public Collection<User> getHelper() {
+    public User getHelper() {
         return helper;
     }
 
-    public void setHelper(Collection<User> helper) {
+    public void setHelper(User helper) {
         this.helper = helper;
     }
 
