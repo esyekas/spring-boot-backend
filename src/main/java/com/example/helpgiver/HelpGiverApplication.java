@@ -1,6 +1,8 @@
 package com.example.helpgiver;
 
+import com.example.helpgiver.mongo.HelpRequestRepository;
 import com.example.helpgiver.mongo.UserRepository;
+import com.example.helpgiver.objects.HelpRequest;
 import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -8,11 +10,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
+import java.util.Arrays;
+
 @SpringBootApplication
 public class HelpGiverApplication implements CommandLineRunner {
 
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private HelpRequestRepository helpRequestRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(HelpGiverApplication.class, args);
@@ -21,7 +28,8 @@ public class HelpGiverApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // Fresh start
-        repository.deleteAll();
+        userRepository.deleteAll();
+        helpRequestRepository.deleteAll();
 
         // Adding test user
         User user1 = new User();
@@ -34,6 +42,27 @@ public class HelpGiverApplication implements CommandLineRunner {
         user1.setRiskGroup("Helper");
         user1.setPhoneNumber("+4677777777");
         user1.setAddressCoordinates(new GeoJsonPoint(59.3293, 18.0686));
-        repository.save(user1);
+        userRepository.save(user1);
+
+        User user2 = new User();
+        user2.setAddressText("Stockholm");
+        user2.setEmail("michal@kopec.pl");
+        user2.setFirstName("Michał");
+        user2.setLastName("Kopeć");
+        user2.setPassword("yyyyyyyy");
+        user2.setPublicName("MK");
+        user2.setRiskGroup("Helper");
+        user2.setPhoneNumber("+466666666");
+        user2.setAddressCoordinates(new GeoJsonPoint(59.2345, 18.0111));
+        userRepository.save(user2);
+
+        // Adding test help request
+        HelpRequest request = new HelpRequest();
+        request.setRequester(user1);
+        request.setTitle("zzz");
+        request.setAddress("Somewhere");
+        request.setAddressCoordinates(new GeoJsonPoint(59.2109, 18.0134));
+        request.setHelper(Arrays.asList(user2));
+        helpRequestRepository.save(request);
     }
 }
