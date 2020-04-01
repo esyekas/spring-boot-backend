@@ -55,6 +55,7 @@ public class UserController {
 
     @GetMapping("/user")
     ResponseEntity<EntityModel<User>> getUserByByEmailOrPhone(@RequestParam Optional<String> email, @RequestParam Optional<String> phoneNumber) {
+        // To prevent not matching emails and phones
         if (email.isPresent() && phoneNumber.isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "You need to provide either email or phone number");
