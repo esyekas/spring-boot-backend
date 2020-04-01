@@ -115,8 +115,8 @@ public class UserController {
     }
 
     @GetMapping("nearbyUsers")
-    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull  double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distance) {
-        List<GeoResult<User>> users = userRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distance, Metrics.KILOMETERS)).getContent();
+    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull  double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
+        List<GeoResult<User>> users = userRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distanceKm, Metrics.KILOMETERS)).getContent();
 
         List<EntityModel<GeoResult<User>>> userEntities = StreamSupport.stream(users.spliterator(), false)
                 .map(user -> new EntityModel<>(user,
@@ -125,6 +125,6 @@ public class UserController {
 
         return ResponseEntity.ok(
                 new CollectionModel<>(userEntities,
-                        linkTo(methodOn(UserController.class).getUserGeo(x, y, distance)).withSelfRel()));
+                        linkTo(methodOn(UserController.class).getUserGeo(x, y, distanceKm)).withSelfRel()));
     }
 }

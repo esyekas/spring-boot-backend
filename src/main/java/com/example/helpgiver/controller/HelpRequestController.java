@@ -73,8 +73,8 @@ public class HelpRequestController {
     }
 
     @GetMapping("nearbyHelpRequests")
-    public ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distance) {
-        List<GeoResult<HelpRequest>> helpRequests = helpRequestRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distance, Metrics.KILOMETERS)).getContent();
+    public ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
+        List<GeoResult<HelpRequest>> helpRequests = helpRequestRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distanceKm, Metrics.KILOMETERS)).getContent();
 
         List<EntityModel<GeoResult<HelpRequest>>> helpRequestEntities = StreamSupport.stream(helpRequests.spliterator(), false)
                 .map(helpRequest -> new EntityModel<>(helpRequest,
@@ -83,7 +83,7 @@ public class HelpRequestController {
 
         return ResponseEntity.ok(
                 new CollectionModel<>(helpRequestEntities,
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequestsGeo(x, y, distance)).withSelfRel()));
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequestsGeo(x, y, distanceKm)).withSelfRel()));
     }
 
     @PostMapping("helpRequest")
