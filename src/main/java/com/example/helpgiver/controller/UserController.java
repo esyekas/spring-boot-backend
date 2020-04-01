@@ -90,8 +90,7 @@ public class UserController {
 
         List<EntityModel<GeoResult<User>>> userEntities = StreamSupport.stream(users.spliterator(), false)
                 .map(user -> new EntityModel<>(user,
-                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel(),
-                        linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
+                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(
