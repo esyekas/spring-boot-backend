@@ -7,8 +7,6 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Collection;
-
 @Document
 public class HelpRequest {
     @Id
@@ -18,13 +16,14 @@ public class HelpRequest {
 
     @Reference
     private User requester;
+
+    @Reference
+    private User helper;
+
     private String address;
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, name = "address_coordinates_index")
     private GeoJsonPoint addressCoordinates;
-
-    @Reference
-    private User helper;
 
     private String category; // TODO enum or from db?
     private String description;
