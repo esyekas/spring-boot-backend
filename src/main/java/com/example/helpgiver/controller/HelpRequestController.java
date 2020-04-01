@@ -35,7 +35,7 @@ public class HelpRequestController {
     @Autowired
     private UserRepository userRepository;
 
-    // TODO help requests should link to users
+    // TODO help requests should link to users (but links are generally meh now)
 
     @GetMapping("helpRequests")
     public ResponseEntity<CollectionModel<EntityModel<HelpRequest>>> getHelpRequests() {
