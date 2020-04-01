@@ -1,17 +1,24 @@
 package com.example.helpgiver.controller;
 
 import com.example.helpgiver.mongo.HelpRequestRepository;
+import com.example.helpgiver.mongo.UserRepository;
 import com.example.helpgiver.objects.HelpRequest;
+import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -22,6 +29,9 @@ public class HelpRequestController {
 
     @Autowired
     private HelpRequestRepository helpRequestRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // TODO help requests should link to users
 
@@ -54,6 +64,28 @@ public class HelpRequestController {
 
         return ResponseEntity.ok(new EntityModel<>(savedHelpRequest,
                 linkTo(methodOn(HelpRequestController.class).getHelpRequest(savedHelpRequest.getId())).withSelfRel(),
+                linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
+    }
+
+    @PostMapping("helpRequest")
+    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@RequestParam @NotNull String id, @RequestParam @NotNull String userId) {
+        Optional<HelpRequest> helpRequest = helpRequestRepository.findById(id);
+        Optional<User> user = userRepository.findById(userId);
+
+        if (!helpRequest.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Help request not found");
+        }
+        if(!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
+        }
+
+        HelpRequest foundHelpRequest = helpRequest.get();
+        foundHelpRequest.getHelper().add(user.get());
+        helpRequestRepository.save(foundHelpRequest);
+
+        return ResponseEntity.ok(new EntityModel<>(foundHelpRequest,
+                linkTo(methodOn(HelpRequestController.class).getHelpRequest(foundHelpRequest.getId())).withSelfRel(),
                 linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
     }
 }
