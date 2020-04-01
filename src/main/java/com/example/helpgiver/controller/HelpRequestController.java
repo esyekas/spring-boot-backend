@@ -16,13 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -86,9 +83,9 @@ public class HelpRequestController {
     }
 
     @PutMapping("helpRequest/{id}/handler")
-    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestBody @NotNull User user) {
+    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestBody @NotNull User handler) {
         Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
-        Optional<User> optionalUser = userRepository.findById(user.getId());
+        Optional<User> optionalUser = userRepository.findById(handler.getId());
 
         if (!optionalHelpRequest.isPresent()) {
             throw new ResponseStatusException(
@@ -99,13 +96,7 @@ public class HelpRequestController {
         }
 
         HelpRequest foundHelpRequest = optionalHelpRequest.get();
-
-        Collection<User> helpers = foundHelpRequest.getHelpers();
-        if (helpers == null) {
-            helpers = new ArrayList<>(1);
-            foundHelpRequest.setHelpers(helpers);
-        }
-        helpers.add(optionalUser.get());
+        foundHelpRequest.setHelper(optionalUser.get());
         helpRequestRepository.save(foundHelpRequest);
 
         return ResponseEntity.ok(new EntityModel<>(foundHelpRequest,
