@@ -59,8 +59,10 @@ public class HelpGiverApplication implements CommandLineRunner {
         // Adding test help request
         HelpRequest request = new HelpRequest();
         request.setRequester(user1);
-        request.setTitle("zzz");
-        request.setAddress("Somewhere");
+        request.setTitle("Need some food");
+        request.setCategory("GROCERY_DELIVERY");
+        request.setDescription("Products: bread, milk, oranges");
+        request.setAddress("Storgatan 1, Stockholm");
         request.setAddressCoordinates(new GeoJsonPoint(59.2109, 18.0134));
         request.setHelper(Arrays.asList(user2));
         helpRequestRepository.save(request);
