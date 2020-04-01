@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -61,7 +62,7 @@ public class HelpRequestController {
     }
 
     @PostMapping("helpRequest")
-    public ResponseEntity<EntityModel<HelpRequest>> createHelpRequest(@RequestParam HelpRequest helpRequest) {
+    public ResponseEntity<EntityModel<HelpRequest>> createHelpRequest(@RequestBody HelpRequest helpRequest) {
         HelpRequest savedHelpRequest = helpRequestRepository.save(helpRequest);
 
         return ResponseEntity.ok(new EntityModel<>(savedHelpRequest,
@@ -70,7 +71,7 @@ public class HelpRequestController {
     }
 
     @PutMapping("helpRequest")
-    public ResponseEntity<EntityModel<HelpRequest>> updateHelpRequest(@RequestParam HelpRequest helpRequest) {
+    public ResponseEntity<EntityModel<HelpRequest>> updateHelpRequest(@RequestBody HelpRequest helpRequest) {
         HelpRequest savedHelpRequest = helpRequestRepository.save(helpRequest);
 
         return ResponseEntity.ok(new EntityModel<>(savedHelpRequest,
@@ -78,8 +79,8 @@ public class HelpRequestController {
                 linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
     }
 
-    @PostMapping("assignRequest")
-    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@RequestParam @NotNull String id, @RequestParam @NotNull String userId) {
+    @PostMapping("helpRequest/{id}/handler")
+    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestParam @NotNull String userId) {
         Optional<HelpRequest> helpRequest = helpRequestRepository.findById(id);
         Optional<User> user = userRepository.findById(userId);
 

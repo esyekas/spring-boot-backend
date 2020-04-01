@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,7 +57,7 @@ public class UserController {
                         linkTo(methodOn(UserController.class).getUsers()).withSelfRel()));
     }
 
-    @GetMapping("/user")
+    @GetMapping("user")
     public ResponseEntity<EntityModel<User>> getUserByByEmailOrPhone(@RequestParam Optional<String> email, @RequestParam Optional<String> phoneNumber) {
         // To prevent not matching emails and phones
         if (email.isPresent() && phoneNumber.isPresent()) {
@@ -81,7 +82,7 @@ public class UserController {
     }
 
     @PostMapping("user")
-    public ResponseEntity<EntityModel<User>> addUser(@RequestParam User user) {
+    public ResponseEntity<EntityModel<User>> addUser(@RequestBody User user) {
         User savedUser = userRepository.save(user);
 
         return ResponseEntity.ok(new EntityModel<>(savedUser,
@@ -90,7 +91,7 @@ public class UserController {
     }
 
     @PutMapping("user")
-    public ResponseEntity<EntityModel<User>> updateUser(@RequestParam User user) {
+    public ResponseEntity<EntityModel<User>> updateUser(@RequestBody User user) {
         User savedUser = userRepository.save(user);
 
         return ResponseEntity.ok(new EntityModel<>(savedUser,
@@ -99,7 +100,7 @@ public class UserController {
     }
 
     @DeleteMapping("user")
-    public ResponseEntity<CollectionModel<Object>> deleteUser(@RequestParam User user) {
+    public ResponseEntity<CollectionModel<Object>> deleteUser(@RequestBody User user) {
         User savedUser = userRepository.save(user);
 
         return ResponseEntity.ok(new CollectionModel<>(Collections.emptySet(),
