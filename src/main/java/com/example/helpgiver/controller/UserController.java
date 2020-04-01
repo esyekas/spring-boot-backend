@@ -99,9 +99,9 @@ public class UserController {
                 linkTo(methodOn(UserController.class).getUsers()).withRel("users")));
     }
 
-    @DeleteMapping("user")
-    public ResponseEntity<CollectionModel<Object>> deleteUser(@RequestBody User user) {
-        User savedUser = userRepository.save(user);
+    @DeleteMapping("user/{id}")
+    public ResponseEntity<CollectionModel<Object>> deleteUser(@PathVariable String id) {
+        userRepository.deleteById(id);
 
         return ResponseEntity.ok(new CollectionModel<>(Collections.emptySet(),
                 linkTo(methodOn(UserController.class).getUsers()).withRel("helpRequests")));

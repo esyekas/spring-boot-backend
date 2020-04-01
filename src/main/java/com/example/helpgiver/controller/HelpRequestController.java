@@ -113,9 +113,9 @@ public class HelpRequestController {
                 linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
     }
 
-    @DeleteMapping("helpRequest")
-    public ResponseEntity<CollectionModel<Object>> deleteHelpRequest(@RequestParam HelpRequest helpRequest) {
-        helpRequestRepository.delete(helpRequest);
+    @DeleteMapping("helpRequest/{id}")
+    public ResponseEntity<CollectionModel<Object>> deleteHelpRequest(@PathVariable String id) {
+        helpRequestRepository.deleteById(id);
 
         return ResponseEntity.ok(new CollectionModel<>(Collections.emptySet(),
                 linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
