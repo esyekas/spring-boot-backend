@@ -9,14 +9,16 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -67,7 +69,16 @@ public class HelpRequestController {
                 linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
     }
 
-    @PostMapping("helpRequest")
+    @PutMapping("helpRequest")
+    public ResponseEntity<EntityModel<HelpRequest>> updateHelpRequest(@RequestParam HelpRequest helpRequest) {
+        HelpRequest savedHelpRequest = helpRequestRepository.save(helpRequest);
+
+        return ResponseEntity.ok(new EntityModel<>(savedHelpRequest,
+                linkTo(methodOn(HelpRequestController.class).getHelpRequest(savedHelpRequest.getId())).withSelfRel(),
+                linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
+    }
+
+    @PostMapping("assignRequest")
     public ResponseEntity<EntityModel<HelpRequest>> addHandler(@RequestParam @NotNull String id, @RequestParam @NotNull String userId) {
         Optional<HelpRequest> helpRequest = helpRequestRepository.findById(id);
         Optional<User> user = userRepository.findById(userId);
@@ -76,7 +87,7 @@ public class HelpRequestController {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Help request not found");
         }
-        if(!user.isPresent()) {
+        if (!user.isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found");
         }
 
@@ -86,6 +97,14 @@ public class HelpRequestController {
 
         return ResponseEntity.ok(new EntityModel<>(foundHelpRequest,
                 linkTo(methodOn(HelpRequestController.class).getHelpRequest(foundHelpRequest.getId())).withSelfRel(),
+                linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
+    }
+
+    @DeleteMapping("helpRequest")
+    public ResponseEntity<CollectionModel<Object>> deleteHelpRequest(@RequestParam HelpRequest helpRequest) {
+        helpRequestRepository.delete(helpRequest);
+
+        return ResponseEntity.ok(new CollectionModel<>(Collections.emptySet(),
                 linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
     }
 }
