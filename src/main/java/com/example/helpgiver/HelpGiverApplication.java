@@ -60,6 +60,7 @@ public class HelpGiverApplication implements CommandLineRunner {
         HelpRequest request = new HelpRequest();
         request.setRequester(user1);
         request.setTitle("zzz");
+        request.setAddress("Somewhere");
         request.setHelper(Arrays.asList(user2));
         helpRequestRepository.save(request);
     }

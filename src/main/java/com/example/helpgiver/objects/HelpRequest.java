@@ -10,6 +10,7 @@ public class HelpRequest {
 
     private String title;
     private User requester;
+    private String address;
 
     private Collection<User> helper;
 
@@ -39,6 +40,14 @@ public class HelpRequest {
 
     public void setRequester(User requester) {
         this.requester = requester;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Collection<User> getHelper() {
