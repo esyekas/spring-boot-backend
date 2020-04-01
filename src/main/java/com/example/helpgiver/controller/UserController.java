@@ -58,7 +58,7 @@ public class UserController {
         // To prevent not matching emails and phones
         if (email.isPresent() && phoneNumber.isPresent()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "You need to provide either email or phone number");
+                    HttpStatus.BAD_REQUEST, "You need to provide either email or phone number but not both");
         }
 
         Optional<User> user = Optional.empty();
