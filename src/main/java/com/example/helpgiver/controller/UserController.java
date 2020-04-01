@@ -51,7 +51,7 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/users")
+    @GetMapping("users")
     public ResponseEntity<CollectionModel<EntityModel<User>>> getUsers() {
         List<EntityModel<User>> userEntities = StreamSupport.stream(userRepository.findAll().spliterator(), false)
                 .map(user -> new EntityModel<>(user,
@@ -114,7 +114,7 @@ public class UserController {
                 linkTo(methodOn(UserController.class).getUsers()).withRel("helpRequests")));
     }
 
-    @GetMapping(value = "/geoUsers")
+    @GetMapping("nearbyUsers")
     ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull  double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distance) {
         List<GeoResult<User>> users = userRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distance, Metrics.KILOMETERS)).getContent();
 

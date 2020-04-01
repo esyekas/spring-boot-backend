@@ -72,7 +72,7 @@ public class HelpRequestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/geoHelpRequests")
+    @GetMapping("nearbyHelpRequests")
     public ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distance) {
         List<GeoResult<HelpRequest>> helpRequests = helpRequestRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distance, Metrics.KILOMETERS)).getContent();
 
