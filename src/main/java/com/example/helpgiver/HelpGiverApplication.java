@@ -56,15 +56,18 @@ public class HelpGiverApplication implements CommandLineRunner {
         user2.setAddressCoordinates(new GeoJsonPoint(59.2345, 18.0111));
         userRepository.save(user2);
 
+        User user1Db = userRepository.findByEmail("andrei@shumanski.com").get();
+        User user2Db = userRepository.findByEmail("michal@kopec.pl").get();
+
         // Adding test help request
         HelpRequest request = new HelpRequest();
-        request.setRequester(user1);
+        request.setRequester(user1Db);
         request.setTitle("Need some food");
         request.setCategory("GROCERY_DELIVERY");
         request.setDescription("Products: bread, milk, oranges");
         request.setAddress("Storgatan 1, Stockholm");
         request.setAddressCoordinates(new GeoJsonPoint(59.2109, 18.0134));
-        request.setHelper(Arrays.asList(user2));
+        request.setHelper(Arrays.asList(user2Db));
         helpRequestRepository.save(request);
     }
 }

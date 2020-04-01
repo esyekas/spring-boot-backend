@@ -3,6 +3,12 @@ package com.example.helpgiver.controller;
 import com.example.helpgiver.mongo.UserRepository;
 import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Metric;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +47,7 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("users")
+    @GetMapping("/users")
     public ResponseEntity<CollectionModel<EntityModel<User>>> getUsers() {
         List<EntityModel<User>> userEntities = StreamSupport.stream(userRepository.findAll().spliterator(), false)
                 .map(user -> new EntityModel<>(user,
@@ -75,5 +82,20 @@ public class UserController {
                         linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(value = "/geoUsers")
+    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull  double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distance) {
+        List<GeoResult<User>> users = userRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distance, Metrics.KILOMETERS)).getContent();
+
+        List<EntityModel<GeoResult<User>>> userEntities = StreamSupport.stream(users.spliterator(), false)
+                .map(user -> new EntityModel<>(user,
+                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                new CollectionModel<>(userEntities,
+                        linkTo(methodOn(UserController.class).getUserGeo(x, y, distance)).withSelfRel()));
     }
 }
